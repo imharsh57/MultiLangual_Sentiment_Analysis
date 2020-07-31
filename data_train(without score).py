@@ -1,4 +1,5 @@
 
+# coding: utf-8
 import numpy as np 
 import pandas as pd 
 from sklearn.model_selection import train_test_split 
@@ -124,49 +125,88 @@ def clean(text):
         if ch not in exclude:
             punc_free.append(ch)
     pf = pf.join(punc_free)
-    
     num_free="".join([i for i in pf if not i.isdigit()])
    
     return num_free
-
 def adjusted_score(s1,s2):
     adj_score = s1+2.0*s2
     return adj_score
 
-def Sentiment_value(score):
+import pandas as pd
+df1 = pd.read_csv("without_score.csv",engine='python')
+df = df1['comment_text'].dropna()
+dataset = df.tolist()
+score=[]
+comments = []
+count=0
+for i in dataset:
+    text = ""
+    text = i
+    print("************************",count)
+    count = count+1
+    trans_text = text
+            
+    stop=set(stopwords.words())
+    import string
+    exclude=set(string.punctuation)
+    trans_text=clean(trans_text)
     
-    if 0.1<score:
-        
-        return "Positive"
+    comments.append(trans_text)
     
-    elif -0.1<score<=0.1:
+    text_token = tokenization(trans_text)
+    
+    text_pos = pos_mark(text_token)
+    
+    wn_text_senti_score = senti_score(text_pos)
+    
+    vander_text_senti_score = vader_senti_score(trans_text)
+    
+    adjusted_score1 = adjusted_score(wn_text_senti_score,vander_text_senti_score)
+    
+    score.append(adjusted_score1)
+    
 
-        return "Neutral"
+
+#************************************************************************************
+dataframe_comments = pd.DataFrame(comments)
+dataframe_comments['comment_text'] = dataframe_comments
+dataframe_comments = dataframe_comments.drop([0], axis = 1) 
+
+#***************************************************************************************
+#************************************************************************************
+
+dataframe_score = pd.DataFrame(score) 
+dataframe_score['Sentiment_Score'] = dataframe_score
+dataframe_score = dataframe_score.drop([0], axis = 1)
+
+#***************************************************************************************
+def flag_df(dataframe_score):
+    
+    if 0.1<dataframe_score['Sentiment_Score']:
+        
+        return 1
+    
+    elif -0.1<dataframe_score['Sentiment_Score']<=0.1:
+
+        return 0
     
     else:
 
-        return "Negative"
-    
-    
-text = "Can it be delivered to Bangalore???"
+        return -1
 
-trans_text = translation_to_eng(text)
-        
-stop=set(stopwords.words())
-import string
-exclude=set(string.punctuation)
-trans_text=clean(trans_text)
+#***************************************************************************************
+#************************************************************************************
 
-text_token = tokenization(trans_text)
+dataframe_score['Sentiment'] = dataframe_score.apply(flag_df, axis = 1)
+dataframe_score = dataframe_score.drop(['Sentiment_Score'], axis = 1)
+#***************************************************************************************
+ 
 
-text_pos = pos_mark(text_token)
+final = pd.concat([dataframe_comments, dataframe_score],axis=1)
+final.to_csv('dataframe_score1.csv')
 
-wn_text_senti_score = senti_score(text_pos)
 
-vander_text_senti_score = vader_senti_score(trans_text)
 
-adjusted_score1 = adjusted_score(wn_text_senti_score,vander_text_senti_score)
-#print(adjusted_score1)  
-
-senti = Sentiment_value(adjusted_score1)
-print(senti)
+#import pandas as pd
+#df = pd.read_csv("dataframe_score1.csv")
+#df = df.drop(['Unnamed: 0'], axis = 1)

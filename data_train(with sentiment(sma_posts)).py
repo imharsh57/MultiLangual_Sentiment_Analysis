@@ -1,7 +1,8 @@
 
 import pandas as pd
 
-dataset = pd.read_csv('sample.csv')
+dataset = pd.read_csv('sma_posts.csv')
+dataset = dataset.drop(['Id'], axis = 1)
 dataset = dataset.dropna()
 dataset.reset_index(inplace = True) 
 dataset = dataset.drop(['index'], axis = 1) 
@@ -20,7 +21,7 @@ count=0
 #now do the same for every row in dataset. run to loop for all rows
 
 for i in range(0, len(dataset)):
-    review = re.sub('[^a-zA-Z]', ' ', dataset['comment_text'][i])
+    review = re.sub('[^a-zA-Z]', ' ', dataset['Text'][i])
     review = review.lower()
     review = review.split()
     review = [word for word in review if not word in set(stopwords.words('english'))]
@@ -34,24 +35,49 @@ for i in range(0, len(dataset)):
     print("****************************************",count)
     count = count+1
     
-"""     Adding corpus to csv 
-corpus_dataset = pd.DataFrame(corpus)
-corpus_dataset['corpus'] = corpus_dataset
-corpus_dataset = corpus_dataset.drop([0], axis = 1) 
-corpus_dataset.to_csv('corpus_dataset.csv')
+"""**********************************************************************************************"""    
+ #Adding corpus to csv 
+#corpus_dataset = pd.DataFrame(corpus)
+#corpus_dataset['corpus'] = corpus_dataset
+#corpus_dataset = corpus_dataset.drop([0], axis = 1) 
+#corpus_dataset.to_csv('corpus_dataset.csv')
+#
+#corpus = pd.read_csv('corpus_dataset.csv',engine='python')
+#corpus = corpus['corpus'].tolist()
+"""**********************************************************************************************"""    
 
-corpus = pd.read_csv('corpus_dataset.csv',engine='python')
-corpus = corpus['corpus'].tolist()
-"""    
-
-"""from sklearn.feature_extraction.text import TfidfVectorizer
-tf = TfidfVectorizer()
-features = tf.fit_transform(corpus).toarray()    """
+"""**********************************************************************************************"""
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#tf = TfidfVectorizer()
+#features = tf.fit_transform(corpus).toarray()    
+"""**********************************************************************************************"""
     
 from sklearn.feature_extraction.text import CountVectorizer
 cv = CountVectorizer(max_features = None)
 
 features = cv.fit_transform(corpus).toarray()
+
+"""**********************************************************************************************"""
+def flag_df(dataset):
+    
+    if dataset['Sentiment'].upper()=="Positive".upper():
+        
+        return 1
+    
+    elif dataset['Sentiment'].upper()=="Neutral".upper():
+
+        return 0
+    
+    else:
+
+        return -1
+    
+#**************************************************************************
+dataset['Sentiment1'] = dataset.apply(flag_df, axis = 1)
+dataset = dataset.drop(['Sentiment'], axis = 1)
+
+"""**********************************************************************************************"""
+
 labels = dataset.iloc[:, 1].values
 
 # Splitting the dataset into the Training set and Test set
@@ -59,10 +85,6 @@ from sklearn.model_selection import train_test_split
 features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size = 0.20, random_state = 0)
 
 '''******************* linear regression***************************'''
-from sklearn.preprocessing import LabelEncoder
-labelencoder = LabelEncoder()
-features[:, 0] = labelencoder.fit_transform(features[:, 0])
-
 
 from sklearn.model_selection import train_test_split  
 features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.2, random_state=0)  
@@ -136,7 +158,12 @@ input_data = cv.transform(input_data).toarray()
 input_pred = classifier.predict(input_data)
 input_pred = input_pred.astype(int)
 
-print("units :",input_pred[0])
+if input_pred[0]==1:
+    print("Positive")
+elif input_pred[0]==0:
+    print("Neutral")
+else:
+    print("Negative")
 
 
 
