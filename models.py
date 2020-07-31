@@ -49,23 +49,22 @@ tf = TfidfVectorizer()
 features = tf.fit_transform(corpus).toarray()    """
     
 from sklearn.feature_extraction.text import CountVectorizer
-cv = CountVectorizer(max_features = None)
-
+cv = CountVectorizer(max_features = 8000)
 features = cv.fit_transform(corpus).toarray()
+'''
+import pickle
+with open('CountVectorizer.pkl','wb') as f:
+    pickle.dump(cv,f)
+'''
+
+
 labels = dataset.iloc[:, 1].values
 
 # Splitting the dataset into the Training set and Test set
 from sklearn.model_selection import train_test_split
 features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size = 0.20, random_state = 0)
 
-'''******************* linear regression***************************'''
-from sklearn.preprocessing import LabelEncoder
-labelencoder = LabelEncoder()
-features[:, 0] = labelencoder.fit_transform(features[:, 0])
-
-
-from sklearn.model_selection import train_test_split  
-features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.2, random_state=0)  
+'''******************* Classification***************************'''
 
 from sklearn.tree import DecisionTreeClassifier  #0.76
 classifier = DecisionTreeClassifier()  
@@ -115,6 +114,12 @@ classifier = MultinomialNB()
 classifier.fit(features_train, labels_train)
 
 
+'''
+import pickle
+with open('classifier.pkl','wb') as f:
+    pickle.dump(classifier,f)
+'''
+
 ''' **************************************************************************'''
 
 labels_pred = classifier.predict(features_test) 
@@ -128,6 +133,13 @@ from sklearn.metrics import accuracy_score
 accuracy_score(labels_test,labels_pred) 
 
 ''' **************************************************************************'''
+'''
+import pickle
+with open('classifier.pkl','rb') as f:
+    classifier = pickle.load(f)
+with open('CountVectorizer.pkl','rb') as f:
+    cv = pickle.load(f)
+'''
 
 input_data = ['Can it be delivered to Bangalore???'] 
   
@@ -136,7 +148,13 @@ input_data = cv.transform(input_data).toarray()
 input_pred = classifier.predict(input_data)
 input_pred = input_pred.astype(int)
 
-print("units :",input_pred[0])
+if input_pred[0]==1:
+    print("Positive")
+elif input_pred[0]==0:
+    print("Neutral")
+else:
+    print("Negative")
+
 
 
 
