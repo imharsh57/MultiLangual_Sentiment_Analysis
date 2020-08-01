@@ -2,9 +2,9 @@ from flask import Flask, render_template, request,jsonify
 app = Flask(__name__)
 
 import pickle
-with open('classifier.pkl','rb') as f:
+with open('classifier_multi.pkl','rb') as f:
     classifier = pickle.load(f)
-with open('CountVectorizer.pkl','rb') as f:
+with open('CountVectorizer_multi.pkl','rb') as f:
     cv = pickle.load(f)
 
 
