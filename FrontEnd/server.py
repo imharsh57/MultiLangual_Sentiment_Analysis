@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request,jsonify
 app = Flask(__name__)
+import pandas as pd
 
 import pickle
 with open('classifier_multi.pkl','rb') as f:
@@ -39,6 +40,33 @@ def form_data():
             else:
                 result = "Negative"
             #print(result)            
+            return jsonify(msg=str(result))
+        
+        if int(selected)==0:
+            imge = user_data["img_name"]
+            print(type(imge))
+            #imge = "insert_file.csv"
+            head=['text']
+            dataset = pd.read_csv(imge,names=head,engine = "python")
+            data = dataset['text'].tolist()
+            score=[]
+            for item in data:
+                 text = str(item).strip()
+                 #print(text)
+                 input_data = [] 
+                 input_data.append(text)
+                 input_data = cv.transform(input_data).toarray()
+                 input_pred = classifier.predict(input_data)
+                 input_pred = input_pred.astype(int)
+                 if input_pred[0]==1:
+                     sc = "Positive"
+                 elif input_pred[0]==0:
+                     sc = "Neutral"
+                 else:
+                     sc = "Negative"
+                 score.append(sc)
+            result = ', '.join(score)
+            print(score)
             return jsonify(msg=str(result))
             
 
