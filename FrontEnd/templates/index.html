@@ -154,7 +154,7 @@
             <div class="card-body" style="height: 180px">
                 <p class="white-text mb-0">
                   <label><b>Insert Sentiment File</b></label><br><br>
-                 <input type='file' onchange="readURL(this);" accept="image/png, .jpeg, .jpg" /><br>
+                 <input type='file' onchange="readURL(this);" /><br>
 
                  <form id="form" method="post"><br>
                   <select name="selected" style="display: none;">
@@ -175,8 +175,9 @@
         <div class="card mdb-color lighten-2 text-center z-depth-2">
             <div class="card-body" style="height: 180px">
                 <p class="white-text mb-0">
-                  <label><b>Output </b></label>
-                 <p id="output" style="margin-top: 10px;font-size: 20px;color: blue"></p>
+                  <label><b>Output </b></label><br>
+                
+                 <textarea rows="4" cols="70" name="text_area" id="output" style="font-size: 20px;color: blue"></textarea>
               </p>
             </div>
         </div>

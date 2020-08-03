@@ -44,8 +44,8 @@ def form_data():
             imge = user_data["img_name"]
             print(type(imge))
             #imge = "insert_file.csv"
-            head=['text']
-            dataset = pd.read_csv(imge,names=head,engine = "python")
+            
+            dataset = pd.read_csv(imge,engine = "python")
            # print(dataset)
             data = dataset['text'].tolist()
             
@@ -62,9 +62,13 @@ def form_data():
                  adjusted_score1 = adjusted_score(wn_text_senti_score,vander_text_senti_score)
                  senti = Sentiment_value(adjusted_score1)
                  print(senti) 
+                 
                  score.append(senti)
+                 
             result = ', '.join(score)
-            print(score)
+            result_test = pd.DataFrame(score)
+            result_test.to_csv('result_test.csv')
+           
             return jsonify(msg=str(result))
             
 

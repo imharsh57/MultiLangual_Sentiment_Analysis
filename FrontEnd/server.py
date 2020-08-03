@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request,jsonify
 app = Flask(__name__)
 import pandas as pd
+import codecs
+
+stopwords = codecs.open("stopwords.txt", "r", encoding='utf-8', errors='ignore').read().split('\n')
 
 import pickle
 with open('classifier_multi.pkl','rb') as f:
@@ -46,8 +49,8 @@ def form_data():
             imge = user_data["img_name"]
             print(type(imge))
             #imge = "insert_file.csv"
-            head=['text']
-            dataset = pd.read_csv(imge,names=head,engine = "python")
+            
+            dataset = pd.read_csv(imge,engine = "python")
             data = dataset['text'].tolist()
             score=[]
             for item in data:
@@ -55,7 +58,25 @@ def form_data():
                  #print(text)
                  input_data = [] 
                  input_data.append(text)
-                 input_data = cv.transform(input_data).toarray()
+                 from nltk.stem.wordnet import WordNetLemmatizer 
+                
+                 corpus = []
+                 count=0
+ 
+                 for i in range(0, len(input_data)):
+                     review = input_data[i]
+                     review = review.lower()
+                     review = review.split()
+                     review = [word for word in review if not word in set(stopwords)]
+                    
+                     lem = WordNetLemmatizer() #Another way of finding root word
+                  
+                     review = [lem.lemmatize(word) for word in review if not word in set(stopwords)]
+                     review = ' '.join(review)
+                     corpus.append(review)
+                     print("****************************************",count)
+                     count = count+1
+                 input_data = cv.transform(corpus).toarray()
                  input_pred = classifier.predict(input_data)
                  input_pred = input_pred.astype(int)
                  if input_pred[0]==1:
@@ -67,6 +88,8 @@ def form_data():
                  score.append(sc)
             result = ', '.join(score)
             print(score)
+            result_test = pd.DataFrame(score)
+            result_test.to_csv('result_test.csv')
             return jsonify(msg=str(result))
             
 
