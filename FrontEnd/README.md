@@ -9,3 +9,4 @@
 
  My Model is trained based on Hindi, English & Hinglish.
 
+ In this both server.py & server(multi_senti_fuc).py has feature to take Input as csv & Predicting the sentiments then store the sentiments into csv file.
