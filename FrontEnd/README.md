@@ -7,5 +7,5 @@
 
 	Both server.py & server(multi_senti_fuc).py are Flask application.
 
- My Model is trained based on Hindi, English & Hinglish
+ My Model is trained based on Hindi, English & Hinglish.
 
