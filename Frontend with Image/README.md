@@ -1,4 +1,4 @@
-# FrontEnd
+# FrontEnd with Image
 
 
  server(multi_senti_fuc).py --> using Google Translate to convert any language into English & then find score for Text. Based on score it classified as Positive, Negative, Neutral.
