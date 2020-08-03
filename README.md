@@ -1,4 +1,4 @@
-# MU455_BeyondInfinity
+# Multilingual Sentiment Analysis (English, Hindi, Hinglish......)
 Smart India Hackathon project on Multilingual Sentiment Analysis
 
 # Problem Statement:
